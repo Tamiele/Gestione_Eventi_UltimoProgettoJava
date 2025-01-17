@@ -4,7 +4,9 @@ package it.epicode.Gestione_Eventi.prenotazione;
 import it.epicode.Gestione_Eventi.auth.AppUser;
 import it.epicode.Gestione_Eventi.evento.Evento;
 import it.epicode.Gestione_Eventi.evento.EventoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +26,10 @@ public class PrenotazioneService {
     @Transactional
     public Prenotazione prenotazioneEvento(PrenotazioneDto prenotazioneDto, AppUser currentUser) {
         Evento evento = eventoRepository.findById(prenotazioneDto.getEventoId())
-                .orElseThrow(() -> new RuntimeException("Evento non trovato"));
+                .orElseThrow(() -> new EntityNotFoundException("Evento non trovato"));
 
         if (evento.getPostiDisponibili() < prenotazioneDto.getNumeroPostiPrenotati()) {
-            throw new RuntimeException("Numero di posti insufficienti.");
+            throw new EntityNotFoundException("Numero di posti insufficienti.");
         }
 
         Prenotazione prenotazione = new Prenotazione();
@@ -47,11 +49,11 @@ public class PrenotazioneService {
     public void cancellaPrenotazione(Long id, AppUser currentUser) {
 
         Prenotazione prenotazione = prenotazioneRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Prenotazione non trovata"));
+                .orElseThrow(() -> new EntityNotFoundException("Prenotazione non trovata"));
 
 
         if (!prenotazione.getUtente().equals(currentUser)) {
-            throw new RuntimeException("Permesso negato: Non hai effettuato questa prenotazione.");
+            throw new AccessDeniedException("Permesso negato: Non hai effettuato tu questa prenotazione.");
         }
 
 

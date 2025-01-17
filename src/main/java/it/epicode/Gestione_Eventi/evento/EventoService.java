@@ -4,6 +4,7 @@ import it.epicode.Gestione_Eventi.auth.AppUser;
 import it.epicode.Gestione_Eventi.auth.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ public class EventoService {
     public Evento createEvento(EventoDto eventoDto, AppUser currentUser) {
         Evento evento = new Evento();
         BeanUtils.copyProperties(eventoDto, evento);
-        evento.setOrganizzatore(currentUser);  // L'organizzatore è quello attualmente loggato
+        evento.setOrganizzatore(currentUser);
         return eventoRepository.save(evento);
     }
 
@@ -29,7 +30,7 @@ public class EventoService {
         Evento evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Evento non trovato"));
         if (!evento.getOrganizzatore().equals(currentUser)) {
-            throw new RuntimeException("Permesso negato: Non sei l'organizzatore di questo evento.");
+            throw new AccessDeniedException("Permesso negato: Non sei l'organizzatore di questo evento.");
         }
         BeanUtils.copyProperties(eventoDto, evento);
         return eventoRepository.save(evento);
@@ -40,7 +41,7 @@ public class EventoService {
         Evento evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Evento non trovato"));
         if (!evento.getOrganizzatore().equals(currentUser)) {
-            throw new RuntimeException("Permesso negato: Non sei l'organizzatore di questo evento.");
+            throw new AccessDeniedException("Permesso negato: Non sei l'organizzatore di questo evento.");
         }
         eventoRepository.delete(evento);
     }
