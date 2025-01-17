@@ -4,4 +4,12 @@ import lombok.Data;
 
 @Data
 public class PrenotazioneDto {
+
+    private Long eventoId;
+
+    private int numeroPostiPrenotati;
+
+
+
+
 }

@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 public class Prenotazione {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-
     private Long id;
 
     @ManyToOne
@@ -23,6 +22,8 @@ public class Prenotazione {
     private Evento evento;
 
     private LocalDateTime dataPrenotazione;
+
+    private int numeroPosti;
 
 
 }
