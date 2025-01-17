@@ -5,15 +5,18 @@ import it.epicode.Gestione_Eventi.auth.AppUser;
 import it.epicode.Gestione_Eventi.evento.Evento;
 import it.epicode.Gestione_Eventi.evento.EventoRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
-import java.time.LocalDate;
+
 import java.time.LocalDateTime;
 
 @Service
+@Validated
 public class PrenotazioneService {
 
 
@@ -24,7 +27,7 @@ public class PrenotazioneService {
     private EventoRepository eventoRepository;
 
     @Transactional
-    public Prenotazione prenotazioneEvento(PrenotazioneDto prenotazioneDto, AppUser currentUser) {
+    public Prenotazione prenotazioneEvento(@Valid PrenotazioneDto prenotazioneDto, AppUser currentUser) {
         Evento evento = eventoRepository.findById(prenotazioneDto.getEventoId())
                 .orElseThrow(() -> new EntityNotFoundException("Evento non trovato"));
 
@@ -33,15 +36,15 @@ public class PrenotazioneService {
         }
 
         Prenotazione prenotazione = new Prenotazione();
-        prenotazione.setUtente(currentUser);  // Assegna l'utente che ha effettuato la prenotazione
-        prenotazione.setEvento(evento);  // Assegna l'evento alla prenotazione
+        prenotazione.setUtente(currentUser);
+        prenotazione.setEvento(evento);
         prenotazione.setNumeroPosti(prenotazioneDto.getNumeroPostiPrenotati());
         prenotazione.setDataPrenotazione(LocalDateTime.now());
 
         evento.setPostiDisponibili(evento.getPostiDisponibili() - prenotazioneDto.getNumeroPostiPrenotati());
-        eventoRepository.save(evento);  // Aggiorna l'evento con il nuovo numero di posti disponibili
+        eventoRepository.save(evento);
 
-        return prenotazioneRepository.save(prenotazione);  // Salva la prenotazione
+        return prenotazioneRepository.save(prenotazione);
     }
 
 

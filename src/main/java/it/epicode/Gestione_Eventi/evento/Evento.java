@@ -2,6 +2,7 @@ package it.epicode.Gestione_Eventi.evento;
 
 import it.epicode.Gestione_Eventi.auth.AppUser;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ public class Evento {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
 
     private String titolo;
     private String descrizione;

@@ -16,7 +16,7 @@ import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/eventi")
-@Validated
+
 public class EventoController {
 
     @Autowired
@@ -27,7 +27,7 @@ public class EventoController {
 
     @PostMapping("/eventi")
     @PreAuthorize("hasRole('ROLE_ORGANIZZATORE')")
-    public ResponseEntity<Evento> createEvento(@Valid @RequestBody EventoDto eventoDto, Principal principal) {
+    public ResponseEntity<Evento> createEvento( @RequestBody EventoDto eventoDto, Principal principal) {
         AppUser currentUser = appUserRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
         Evento evento = eventoService.createEvento(eventoDto, currentUser);
@@ -36,7 +36,7 @@ public class EventoController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ORGANIZZATORE')")
-    public ResponseEntity<Evento> modificaEvento(@Valid @PathVariable Long id, @RequestBody EventoDto eventoDto, Principal principal) {
+    public ResponseEntity<Evento> modificaEvento( @PathVariable Long id, @RequestBody EventoDto eventoDto, Principal principal) {
         AppUser currentUser = appUserRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
         Evento evento = eventoService.updateEvento(id, eventoDto, currentUser);

@@ -1,23 +1,26 @@
 package it.epicode.Gestione_Eventi.evento;
 
 import it.epicode.Gestione_Eventi.auth.AppUser;
-import it.epicode.Gestione_Eventi.auth.AppUserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @RequiredArgsConstructor
+@Validated
 public class EventoService {
 
     private final EventoRepository eventoRepository;
 
-    private final AppUserRepository appUserRepository;
 
     @Transactional
-    public Evento createEvento(EventoDto eventoDto, AppUser currentUser) {
+    public Evento createEvento(@Valid EventoDto eventoDto, AppUser currentUser) {
         Evento evento = new Evento();
         BeanUtils.copyProperties(eventoDto, evento);
         evento.setOrganizzatore(currentUser);
@@ -26,9 +29,9 @@ public class EventoService {
 
 
     @Transactional
-    public Evento updateEvento(Long id, EventoDto eventoDto, AppUser currentUser) {
+    public Evento updateEvento(Long id, @Valid EventoDto eventoDto, AppUser currentUser) {
         Evento evento = eventoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Evento non trovato"));
+                .orElseThrow(() -> new EntityNotFoundException("Evento non trovato"));
         if (!evento.getOrganizzatore().equals(currentUser)) {
             throw new AccessDeniedException("Permesso negato: Non sei l'organizzatore di questo evento.");
         }
@@ -39,13 +42,12 @@ public class EventoService {
     @Transactional
     public void deleteEvento(Long id, AppUser currentUser) {
         Evento evento = eventoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Evento non trovato"));
+                .orElseThrow(() -> new EntityNotFoundException("Evento non trovato"));
         if (!evento.getOrganizzatore().equals(currentUser)) {
             throw new AccessDeniedException("Permesso negato: Non sei l'organizzatore di questo evento.");
         }
         eventoRepository.delete(evento);
     }
-
 
 
 }

@@ -16,7 +16,7 @@ import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/prenotazioni")
-@Validated
+
 public class PrenotazioneController {
 
     @Autowired
@@ -27,7 +27,7 @@ public class PrenotazioneController {
 
     @PostMapping("/prenotazioni")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<Prenotazione> prenotaEvento(@Valid @RequestBody PrenotazioneDto prenotazioneDto, Principal principal) {
+    public ResponseEntity<Prenotazione> prenotaEvento( @RequestBody PrenotazioneDto prenotazioneDto, Principal principal) {
         // Recupera l'utente attualmente loggato tramite il Principal
         AppUser currentUser = appUserRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new EntityNotFoundException("Utente non trovato"));
