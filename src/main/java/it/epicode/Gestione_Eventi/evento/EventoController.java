@@ -30,19 +30,29 @@ public class EventoController {
         return ResponseEntity.ok(evento);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ORGANIZZATORE')")
+    public ResponseEntity<Evento> modificaEvento(@PathVariable Long id, @RequestBody EventoDto eventoDto, Principal principal) {
+        AppUser currentUser = appUserRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+        Evento evento = eventoService.updateEvento(id, eventoDto, currentUser);
+        return ResponseEntity.ok(evento);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ORGANIZZATORE')")
+    public ResponseEntity<Void> cancellaEvento(@PathVariable Long id, Principal principal) {
+        AppUser currentUser = appUserRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Utente non trovato"));
+        eventoService.deleteEvento(id, currentUser);
+        return ResponseEntity.noContent().build();
+    }
 
 
-//    @PutMapping("/{id}")
-//    @PreAuthorize("hasRole('ROLE_ORGANIZZATORE')")
-//    public ResponseEntity<Evento> modificaEvento(@PathVariable Long id, @RequestBody EventoDto eventoDto) {
-//        Evento evento = eventoService.updateEvento(id, eventoDto);
-//        return new ResponseEntity<>(evento, HttpStatus.OK);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    @PreAuthorize("hasRole('ROLE_ORGANIZZATORE')")
-//    public ResponseEntity<Evento> cancellaEvento(@PathVariable Long id) {
-//        Evento evento = eventoService.deleteEvento(id);
-//        return new ResponseEntity<>(evento, HttpStatus.OK);
-//    }
+
+
+
+
+
+
 }
