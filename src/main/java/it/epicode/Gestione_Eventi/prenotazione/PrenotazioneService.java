@@ -26,6 +26,7 @@ public class PrenotazioneService {
     @Autowired
     private EventoRepository eventoRepository;
 
+    //
     @Transactional
     public Prenotazione prenotazioneEvento(@Valid PrenotazioneDto prenotazioneDto, AppUser currentUser) {
         Evento evento = eventoRepository.findById(prenotazioneDto.getEventoId())
